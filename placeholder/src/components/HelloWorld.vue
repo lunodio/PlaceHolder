@@ -59,7 +59,7 @@
 import '@wangeditor/editor/dist/css/style.css'
 import {onBeforeUnmount, ref, shallowRef} from 'vue'
 import {Editor, Toolbar} from '@wangeditor/editor-for-vue'
-import type {PlaceholderElement} from '../container/custom-types'
+import type {PlaceholderElement} from '../editor/custom-types'
 import {Transforms, Node} from 'slate'
 import {SlateEditor, SlateTransforms} from "@wangeditor/editor";
 

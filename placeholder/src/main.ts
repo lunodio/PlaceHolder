@@ -6,10 +6,12 @@ import '@wangeditor/editor/dist/css/style.css'
 
 import {Boot} from '@wangeditor/editor'
 import type {IModuleConf} from '@wangeditor/editor'
-import plugin from './container/plugin'
-import renderElemConf from './container/render-elem'
-import elemToHtml from './container/elem-to-html'
-import parseHtmlConf from './container/parse-elem-html'
+// import plugin from '@/'
+// import * from "@/com"
+import plugin from './editor/plugin'
+import renderElemConf from './editor/render-elem'
+import elemToHtml from './editor/elem-to-html'
+import parseHtmlConf from './editor/parse-elem-html'
 
 const module: Partial<IModuleConf> = {
     editorPlugin: plugin.editorPlugin,
