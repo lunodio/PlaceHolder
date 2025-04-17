@@ -194,24 +194,42 @@ export default {
 
     const submitModal = () => {
       const editor = editorRef.value;
-      if (modalId.value && modalName.value && editor) {
-        if (savedSelection.value) {
-          editor.selection = savedSelection.value // 恢复光标位置
-        }
+      if (!modalId.value || !modalName.value || !editor) {
+        alert('请填写 ID 和 Name')
+        return
+      }
 
-        const node: PlaceholderElement = {
-          type: 'placeholder',
-          id: Number(modalId.value),
-          name: modalName.value,
-          value: "    ",
-          children: [{text: ''}]
+      console.log("sav " + savedSelection.value)
+      // 恢复保存的选区
+      if (savedSelection.value) {
+        try {
+          editor.selection = savedSelection.value
+        } catch (e) {
+          console.warn('无法恢复选区，可能已失效', e)
         }
+      }
 
+      const node: PlaceholderElement = {
+        type: 'placeholder',
+        id: Number(modalId.value),
+        name: modalName.value,
+        value: "    ",
+        children: [{text: ''}]
+      }
+
+      try {
         editor.insertNode(node)
         updatePlaceholderList()
+
+        // 插入后再次聚焦到编辑器
+        editor.focus()
+
+        // 清理弹窗状态
         showModal.value = false
-      } else {
-        alert('请填写 ID 和 Name')
+        modalId.value = ''
+        modalName.value = ''
+      } catch (e) {
+        console.error('插入占位符失败', e)
       }
     }
 
@@ -252,6 +270,7 @@ export default {
 </script>
 
 <style scoped>
+/* Modal overlay */
 .modal {
   position: fixed;
   top: 0;
@@ -262,33 +281,73 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
+/* Modal content */
 .modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.modal-content input {
-  display: block;
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
-  margin: 10px 0;
-  padding: 5px;
+  max-width: 400px;
 }
 
+/* Modal heading */
+.modal-content h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Input fields */
+.modal-content input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: #333;
+  background: #fff;
+}
+
+/* Buttons */
 .modal-content button {
-  margin: 5px;
-  padding: 8px 16px;
-  background: #007bff;
-  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
   border: none;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-.modal-content button:hover {
-  background: #0056b3;
+.modal-content button:first-of-type {
+  background: #007bff;
+  color: #fff;
+  margin-right: 0.5rem;
+}
+
+.modal-content button:first-of-type:hover {
+  background: #0069d9;
+}
+
+.modal-content button:last-of-type {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.modal-content button:last-of-type:hover {
+  background: #e0e0e0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .modal-content {
+    margin: 1rem;
+    padding: 1rem;
+  }
 }
 </style>

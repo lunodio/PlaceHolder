@@ -83,7 +83,7 @@ function sync_content(id: string, content: string) {
 <template>
   <div class="container">
     <div class="editor-pane">
-      <h2>文档编辑器</h2>
+      <h2>aaa</h2>
       <div ref="editorRef"></div>
       <button @click="showPopup = true">插入占位符</button>
     </div>
@@ -100,8 +100,8 @@ function sync_content(id: string, content: string) {
   </div>
 
   <div v-if="showPopup" class="popup">
-    <input v-model="ph_name" placeholder="输入公司名"/>
-    <input v-model="ph_id" placeholder="输入ID（可选）"/>
+    <input v-model="ph_name" placeholder="nmea"/>
+    <input v-model="ph_id" placeholder="id"/>
     <button @click="add_ph">确定</button>
     <button @click="showPopup = false">取消</button>
   </div>
