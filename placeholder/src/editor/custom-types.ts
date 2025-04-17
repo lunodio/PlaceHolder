@@ -17,5 +17,6 @@ export type PlaceholderElement = {
     type: 'placeholder'
     id: number
     name: string
+    value: string
     children: [{ text: string }]
 }

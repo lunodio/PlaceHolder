@@ -4,16 +4,21 @@ import type {IDomEditor, SlateElement} from '@wangeditor/editor'
 import {h, type VNode} from 'snabbdom'
 import {DomEditor} from '@wangeditor/editor'
 import type {PlaceholderElement} from './custom-types'
+
 function renderAttachment(elem: SlateElement, children: VNode[] | null, editor: IDomEditor): VNode {
-    const isDisabled = editor.isDisabled()
-    const selected = DomEditor.isNodeSelected(editor, elem)
-    const { id = '1', name = '' } = elem as PlaceholderElement
+    // const isDisabled = editor.isDisabled()
+    // const selected = DomEditor.isNodeSelected(editor, elem)
+    const {id, value} = elem as PlaceholderElement
 
     return h('span', {
         props: {
-            contentEditable: !isDisabled,
-            suppressContentEditableWarning: true,
+            contentEditable: false,
+
         },
+        // props: {
+        //     contentEditable: true,
+        //     // suppressContentEditableWarning: true,
+        // },
         attrs: {
             'data-placeholder-id': id,
         },
@@ -29,18 +34,18 @@ function renderAttachment(elem: SlateElement, children: VNode[] | null, editor: 
             cursor: 'text',
             minWidth: '30px',
         },
-        on: {
-            blur: (e: Event) => {
-                const newText = (e.target as HTMLElement).innerText.trim()
-                updateAllPlaceholders(editor, id, newText)
-            }
-        }
-    }, name)
+        // on: {
+        //     click: (e: Event) => {
+        //         const newText = (e.target as HTMLElement).innerText.trim()
+        //         updateAllPlaceholders(editor, id, newText)
+        //     },
+        // }
+    }, value)
 }
 
 
 function updateAllPlaceholders(editor: IDomEditor, id: number, newValue: string) {
-    console.log("更新 " + id + " 为 " + newValue)
+    console.log("更新???? " + id + " 为 " + newValue)
 }
 
 

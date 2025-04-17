@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TestView from "./components/HelloWorld.vue";
+import TestView from "./components/PhEditor.vue";
 </script>
 
 <template>

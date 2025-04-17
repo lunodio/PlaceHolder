@@ -12,10 +12,16 @@ import plugin from './editor/plugin'
 import renderElemConf from './editor/render-elem'
 import elemToHtml from './editor/elem-to-html'
 import parseHtmlConf from './editor/parse-elem-html'
+import PlhMenu from "./editor/menu/place-holder-menu.ts";
 
 const module: Partial<IModuleConf> = {
     editorPlugin: plugin.editorPlugin,
-    // menus: plugin.,
+    menus: [{
+        key: 'menu1',
+        factory() {
+            return new PlhMenu()
+        }
+    }],
     renderElems: [renderElemConf],
     elemsToHtml: [elemToHtml],
     parseElemsHtml: [parseHtmlConf],

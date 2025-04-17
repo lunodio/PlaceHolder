@@ -1,11 +1,6 @@
 <template>
   <div style="display: flex">
     <div style="flex: 1">
-      <div>
-        <button @click="openModal">插入占位符</button>
-        <button @click="printHtml">print html</button>
-        <button @click="disable">disable</button>
-      </div>
       <div style="border: 1px solid #ccc; margin-top: 10px">
         <Toolbar
             :editor="editorRef"
@@ -57,11 +52,11 @@
 
 <script lang="ts">
 import '@wangeditor/editor/dist/css/style.css'
-import {onBeforeUnmount, ref, shallowRef} from 'vue'
+import {onBeforeUnmount, onMounted, ref, shallowRef, withKeys} from 'vue'
 import {Editor, Toolbar} from '@wangeditor/editor-for-vue'
 import type {PlaceholderElement} from '../editor/custom-types'
-import {Transforms, Node} from 'slate'
 import {SlateEditor, SlateTransforms} from "@wangeditor/editor";
+import emitter from "@/but.js";
 
 export default {
   components: {Editor, Toolbar},
@@ -70,6 +65,10 @@ export default {
     const valueHtml = ref('<p>hello</p>')
     const mode = 'default'
     const toolbarConfig = {}
+    toolbarConfig.insertKeys = {
+      index: 2, // 插入的位置，基于当前的 toolbarKeys
+      keys: ['menu1'],
+    }
     const editorConfig = {placeholder: '请输入内容...'}
 
     // 占位符列表和值
@@ -124,8 +123,10 @@ export default {
         //     {name: '22222222'}, // 新的属性值
         //     {at: path} // 节点路径
         // );
-        SlateTransforms.setNodes(editor, {name: value}, {at: path})
-        console.log("name " + path + "\n" + node)
+        SlateTransforms.setNodes(editor, {value: value}, {at: path})
+        // console.log("name " + path + "\n" + node)
+        // const childPath = path.concat(0) // children[0]
+        // Transforms.insertText(editor, value, {at: childPath})
       }
     }
 // 更新占位符列表（去重）
@@ -182,36 +183,32 @@ export default {
       }
     }
 
+    const savedSelection = ref(null)
     const openModal = () => {
-
-      const editor = editorRef.value;
-      const node: PlaceholderElement = {
-        type: 'placeholder',
-        id: 122,
-        name: "名字",
-        children: [{text: ''}]
+      const editor = editorRef.value
+      if (editor) {
+        savedSelection.value = editor.selection // 保存当前选区
       }
-      editorRef.value.insertNode(node)
-      updatePlaceholderList()
-      // const nodes = editor.children.filter(
-      //     (node) => node.type === 'placeholder'
-      // ) as PlaceholderElement[]
-      // placeholders.value = nodes.map((node) => ({
-      //   id: node.id,
-      //   name: node.name,
-      //   value: placeholderValues.value[node.id] || ''
-      // }))
+      showModal.value = true
     }
 
     const submitModal = () => {
-      if (modalId.value && modalName.value && editorRef.value) {
+      const editor = editorRef.value;
+      if (modalId.value && modalName.value && editor) {
+        if (savedSelection.value) {
+          editor.selection = savedSelection.value // 恢复光标位置
+        }
+
         const node: PlaceholderElement = {
           type: 'placeholder',
-          id: modalId.value,
+          id: Number(modalId.value),
           name: modalName.value,
+          value: "    ",
           children: [{text: ''}]
         }
-        editorRef.value.insertNode(node)
+
+        editor.insertNode(node)
+        updatePlaceholderList()
         showModal.value = false
       } else {
         alert('请填写 ID 和 Name')
@@ -219,7 +216,12 @@ export default {
     }
 
 
+    onMounted(() => {
+      emitter.on('open-placeholder-modal', openModal)
+    })
     onBeforeUnmount(() => {
+      emitter.off('open-placeholder-modal', openModal)
+
       if (editorRef.value) {
         editorRef.value.destroy()
         editorRef.value = null
